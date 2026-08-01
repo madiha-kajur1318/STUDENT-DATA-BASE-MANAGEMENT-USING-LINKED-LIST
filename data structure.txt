@@ -1,0 +1,476 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+typedef struct student
+{
+    int rollno;
+    char name[20];
+    float marks;
+    struct student *next;
+}sll;
+
+void stud_add(sll **hp);
+void show_node(sll *hp);
+void dell_node(sll **hp);
+void modify_node(sll *hp);
+void sort_node(sll *hp);
+void dell_all(sll **hp);
+void reverse_list(sll *hp);
+void save(sll *hp);
+void exit_file(sll *hp);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void main()
+{
+    sll *hp=0;
+    int c;
+    char op;
+    while(1)
+    {
+        printf("****STUDENT RECORD MENU****\n");
+        printf("______________________________\n");
+        printf(" a/A :add new record \n d/D :delete a record\n s/S :show the list \n m/M :modify a record \n v/V :save \n e/E :exit \n t/T :sort the list \n l/L :delete all the records \n r/R :reverse the list\n\n");
+        printf("Enter your choice:\n");
+        scanf(" %c",&op);
+//       if(op>='A' && op<='Z')
+  //      op+=32;
+
+        switch(op)
+{
+            case 'a':stud_add(&hp);
+                      break;
+           case 'd':dell_node(&hp);
+                      break;
+            case 'e':exit_file(hp);
+                      break;
+            case 'm':modify_node(hp);
+                      break;
+            case 's':show_node(hp);
+                     break;
+            case 't':sort_node(hp);
+                     break;
+            case 'l':dell_all(&hp);
+                     break;
+            case 'r':reverse_list(hp);
+                     break;
+            case 'v':save(hp);
+                     break;
+            default:
+            printf(">>>> Unknown choice <<<<\n");
+        }
+
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ void stud_add(sll **ptr)
+  {
+          int c=1,f;
+          sll *new,*last,*t;
+          new=malloc(sizeof(sll));
+          while(1)
+          {
+                  f=0;
+                  t=*ptr;
+                  while(t!=0)
+                  {
+                          if(t->rollno==c)
+                          {
+                                  f=1;
+                                  break;
+                          }
+                        t=t->next;
+                  }
+                  if(f)
+                          c++;
+                  else
+                          break;
+         }
+          new->rollno=c++;
+          printf("enter the name and marks\n");
+          scanf(" %s %f",new->name,&new->marks);
+          new->next=0;
+          if(*ptr==0)
+                  *ptr=new;
+          else
+          {                 last=*ptr;
+
+                     while(last->next)
+                          last=last->next;
+                  last->next=new;
+          }
+  }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void show_node(sll *ptr)
+  {
+          if(ptr==0)
+          {
+                  printf("no records found\n");
+                  return;
+          }
+          while(ptr)
+          {
+                  printf("%d %s %f\n",ptr->rollno,ptr->name,ptr->marks);
+                  ptr=ptr->next;
+          }
+  }
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+  void save(sll *ptr)
+  {
+          if(ptr==0)
+ {
+                  printf("no records found\n");
+                  return;
+          }
+          int c=1;
+          FILE *fp;
+          fp=fopen("data","w");
+         while(ptr)
+         {
+                 ptr->rollno=c++;
+                 fprintf(fp,"%d %s %f\n",ptr->rollno,ptr->name,ptr->marks);
+                 ptr=ptr->next;
+         }
+         printf("files saved\n");
+
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void dell_all(sll **ptr)
+ {
+         int c=1;
+         if(*ptr==0)
+         {
+                 printf("no records present\n");
+                 return;
+         }
+         sll *del=*ptr;
+         while(del)
+         {
+                 *ptr=del->next;
+                 free(del);
+                 printf("delete %d\n",c++);
+                 del=*ptr;
+         }
+         printf("all nodes deleted\n");
+ }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void dell_node(sll **ptr)
+ {
+ char op1;
+printf("r)rollno n)name\n");
+ scanf(" %c",&op1);
+ if(op1=='n')
+ {
+         if(*ptr==0)
+         {
+                 printf("no records found\n");
+                 return;
+         }
+         char name[20];
+         sll *del=*ptr,*prev=*ptr;
+         printf("enter the name\n");
+         scanf("%s",name);
+         while(del)
+         {
+                 if(strcmp(name,del->name)==0)
+                 {
+                         if(*ptr==del)
+                         {
+                                 *ptr=del->next;
+                                 free(del);
+                         }
+                         else
+ {
+                                 prev->next=del->next;
+                                 free(del);
+                        }
+                 }
+                 prev=del;
+                 del=del->next;
+         }
+ }
+ else if(op1=='r')
+ {
+         if(*ptr==0)
+         {
+                 printf("no records found\n");
+                 return;
+         }
+         sll *del=*ptr,*prev=*ptr;
+         int num;
+         printf("enter the num\n");
+         scanf("%d",&num);
+while(del)
+         {
+                 if(num==del->rollno)
+                 {
+                         if(del==*ptr)
+                         {
+                                 *ptr=del->next;
+                                 free(del);
+                         }
+                         else
+                         {
+                                 prev->next=del->next;
+                                 free(del);
+
+    }
+                 }
+                 prev=del;
+                 del=del->next;
+         }
+ }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void reverse_list(sll *ptr)
+ {
+         if(ptr==0)
+         {
+                 printf("no records\n");
+                 return;
+         }
+         int i,j,c1=0,c=0;
+         sll *t,*p=ptr;
+         while(p)
+         {
+
+                 c1++;
+                 p=p->next;
+         }
+         for(i=0;i<c1;i++)
+         {
+                 t=ptr;
+                 for(j=0;j<c1-i-1;j++)
+t=t->next;
+                 printf("%d %s %f\n",t->rollno,t->name,t->marks);
+         }
+         printf("all reversed\n");
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void modify_node(sll *hp)
+ {
+     int ch,n,i=0;
+     char mname[20],rname[20];
+     float per,score;
+     sll *t=hp,*a[10];
+      printf("enter choice modify by \n 1.rollno\n 2.name\n3.percentage:\n");
+      scanf("%d",&ch);
+      if(ch==1)
+      {
+          printf("enter rollno to search:\n");
+          scanf("%d",&n);
+          i=1;
+          while(t)
+          {
+              if(t->rollno==n)
+              {
+              i=0;
+              break;
+              }
+              t=t->next;
+          }
+          if(i==1)
+                        {
+              printf("rollno not found\n");
+              return;
+          }
+      }
+      else if(ch==2)
+      {
+  {
+          i=0;
+          printf("enter name to search:\n");
+          scanf("%s",mname);
+          while(t)
+{
+              if((strcmp(t->name,mname))==0)
+              {
+              a[i]=t;
+              printf("%d %s %f\n",t->rollno,t->name,t->marks);
+              i++;
+              }
+              t=t->next;
+          }
+          if(i==0)
+          {
+              printf("name not found\n");
+              return;
+          }
+          ch=i;
+
+          printf("enter rollno from above names list to modify:\n");
+          scanf("%d",&n);
+
+          for(i=0;i<ch;i++)
+          {
+              if(a[i]->rollno==n)
+              {
+                  t=a[i];
+                  break;
+              }
+          }
+
+      }
+      }
+       else if(ch==3)
+        {
+          i=0;
+
+          printf("enter marks to search:\n");
+          scanf("%f",&per);
+          while(t)
+          {
+              if(t->marks==per)
+ {
+              a[i]=t;
+              printf("%d %s %f\n",t->rollno,t->name,t->marks);
+              i++;
+              }
+              t=t->next;
+          }
+          if(i==0)
+          {
+              printf("marks not found\n");
+              return;
+          }
+          ch=i;
+          printf("enter rollno from above names list to modify:\n");
+          scanf("%d",&n);
+          for(i=0;i<ch;i++)
+          {
+              if(a[i]->rollno==n)
+              {
+                  t=a[i];
+                  break;
+                            }
+          }
+
+      }
+
+      printf("Enter name and percentage to modify:\n");
+      scanf(" %s%f",rname,&score);
+      strcpy(t->name,rname);
+      t->marks=score;
+      show_node(hp);
+ }
+
+ ///////////////////////////////////////////////////////////////////////////////////////////////
+
+ void sort_node(sll *hp)
+ {
+     char op;
+     int i,j,n,c=0;
+     sll *p=(sll *)malloc(sizeof(sll));
+     sll *q=(sll *)malloc(sizeof(sll));
+     sll *t=(sll *)malloc(sizeof(sll));
+     printf("enter\n N/n: sort with name \n P/p: sort with percentage:");
+     scanf(" %c",&op);
+     if(op>='A' && op<='Z')
+     op+=32;
+     sll *k=hp;
+     while(k)
+     {
+         c++;
+         k=k->next;
+     }
+     p=hp;
+
+     if(op=='n')
+     {
+         for(i=0;i<c-1;i++)
+         {
+
+            q=p->next;
+             for(j=0;j<c-1-i;j++)
+             {
+                 if(strcmp(p->name,q->name)>0)
+                 {
+                     t->rollno=p->rollno;
+
+                     p->rollno=q->rollno;
+                     q->rollno=t->rollno;
+
+                     strcpy(t->name,p->name);
+                     strcpy(p->name,q->name);
+                     strcpy(q->name,t->name);
+
+                     t->marks=p->marks;
+                     p->marks=q->marks;
+                     q->marks=t->marks;
+                 }
+                 q=q->next;
+                             }
+             p=p->next;
+         }
+     }
+
+     else if(op=='p')
+     {
+         for(i=0;i<c-1;i++)
+
+{
+             q=p->next;
+             for(j=0;j<c-1-i;j++)
+             {
+                 if(p->marks > q->marks)
+                 {
+                     t->rollno=p->rollno;
+                     p->rollno=q->rollno;
+                     q->rollno=t->rollno;
+                     strcpy(t->name,p->name);
+                     strcpy(p->name,q->name);
+                     strcpy(q->name,t->name);
+
+                     t->marks=p->marks;
+                     p->marks=q->marks;
+                     q->marks=t->marks;
+                 }
+                 q=q->next;
+             }
+             p=p->next;
+         }
+     }
+     else
+     {
+         printf("unknown choice!!\n");
+     }
+ }
+
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void exit_file(sll *hp)
+ {
+     int op;
+     printf("enter choice\n 1.save and exit\n 2.exit without saing:\n");
+     scanf("%d",&op);
+     if(op==1)
+     {
+         save(hp);
+         exit(0);
+     }
+     else if(op==2)
+     exit(0);
+ }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+                                        
+
+                             
+
+
+                                     
+                             
+
